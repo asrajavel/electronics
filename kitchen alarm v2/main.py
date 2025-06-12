@@ -10,8 +10,7 @@ adcpin = machine.Pin(29, machine.Pin.IN)
 
 # Initialize components
 adc = ADC(3)
-mydisplay = tm1637.TM1637(clk=Pin(20), dio=Pin(21))
-# buzzer = PWM(Pin(15))
+mydisplay = tm1637.TM1637(clk=Pin(20), dio=Pin(21), brightness=0)
 buzzer = Pin(11, Pin.OUT)
 
 # Conversion factor for ADC to voltage (multiplied by 2)
@@ -108,5 +107,6 @@ if __name__ == "__main__":
     mydisplay.show('done')  # Show 'done' on display
 
     beep_buzzer_thrice_every_10_seconds()  # Beep thrice every 10 seconds
+
 
 
