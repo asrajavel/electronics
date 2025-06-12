@@ -132,8 +132,4 @@ if __name__ == "__main__":
     
     countup_timer(total_time)  # Start the countdown timer with selected duration
 
-    mydisplay.show('done')  # Show 'done' on display
-
     beep_buzzer_thrice_every_10_seconds()  # Beep thrice every 10 seconds
-
-
