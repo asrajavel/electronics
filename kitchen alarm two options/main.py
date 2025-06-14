@@ -1,4 +1,5 @@
 import tm1637
+import machine
 from machine import ADC
 from machine import Pin
 import time
@@ -10,10 +11,9 @@ adcpin = machine.Pin(29, machine.Pin.IN)
 
 # Initialize components
 adc = ADC(3)
-mydisplay = tm1637.TM1637(clk=Pin(20), dio=Pin(21))
-# buzzer = PWM(Pin(15))
+mydisplay = tm1637.TM1637(clk=Pin(20), dio=Pin(21), brightness=0)
 buzzer = Pin(11, Pin.OUT)
-option_button = Pin(12, Pin.IN, Pin.PULL_UP)  # Button connected to GPIO 12 with internal pull-up
+option_button = Pin(15, Pin.IN, Pin.PULL_UP)  # Button connected to GPIO 15 with internal pull-up
 
 # Conversion factor for ADC to voltage (multiplied by 2)
 conversion_factor = 3.3 / 65535 * 3  # 3.3V / max ADC value (65535) multiplied by 3
@@ -40,7 +40,6 @@ def read_average_adc(num_samples=10):
 
 # Display battery voltage as a percentage
 def display_voltage():
-    
     # lithium ion Voltage limits
     V_MIN = 3.2
     V_MAX = 4.2
@@ -60,7 +59,14 @@ def display_voltage():
 
     print("Battery Voltage: {:.2f} V ({:.0f}%)".format(voltage, voltage_percentage))  # Print voltage and percentage
     mydisplay.number(int(voltage_percentage))  # Show the percentage on display
-    time.sleep(1.5)  # Delay for 1.5 seconds
+    
+    # Check for button press during voltage display
+    start_time = ticks_ms()
+    while ticks_ms() - start_time < 3000:  # 3 seconds
+        if option_button.value() == 0:  # Button is pressed (active low)
+            return True
+        sleep(0.01)
+    return False
 
 # Count-up timer function
 def countup_timer(total_time):  # total_time in seconds
@@ -108,27 +114,33 @@ def beep_buzzer_thrice_every_10_seconds():
         sleep(10)
 
 
+def handle_time_selection(use_10_minutes):
+    """
+    Handle the time selection display and beeping.
+    Returns the total time in seconds.
+    """
+    if use_10_minutes:
+        mydisplay.number(10)
+        beep_buzzer_short()  # beep for 10 minutes
+        sleep(.5)
+        return 600  # 10 minutes
+    else:
+        mydisplay.number(5)
+        sleep(.5)
+        return 300  # 5 minutes
+
+
 # Main execution sequence
 if __name__ == "__main__":
     mydisplay.show('8888')
     
-    beep_buzzer_short()  # Beep once briefly
+    beep_buzzer_short()  # Initial beep
 
-    display_voltage()  # Display the battery voltage percentage
-
-    # Show selection mode
-    mydisplay.show('SEL')
+    # Check if button was pressed during voltage display
+    use_10_minutes = display_voltage()  # Display the battery voltage percentage and handle selection
     
-    # Wait for button press
-    use_10_minutes = check_button_press()
-    
-    # Show selected time
-    if use_10_minutes:
-        mydisplay.show('10')
-        total_time = 600  # 10 minutes
-    else:
-        mydisplay.show('5')
-        total_time = 300  # 5 minutes
+    # Handle time selection and get total time
+    total_time = handle_time_selection(use_10_minutes)
     
     countup_timer(total_time)  # Start the countdown timer with selected duration
 
