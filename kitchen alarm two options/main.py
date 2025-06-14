@@ -57,12 +57,21 @@ def display_voltage():
 # Count-up timer function
 def countup_timer(total_time):  # total_time in seconds
     elapsed_time = 0
+    is_10_minutes = total_time == 600  # Check if it's 10 minutes
 
     while elapsed_time <= total_time:
         minutes = elapsed_time // 60
         seconds = elapsed_time % 60
-        mydisplay.numbers(minutes, seconds)
-        sleep(1)  # Delay for 1 second
+        if is_10_minutes:
+            # For 10 minutes, blink the colon
+            mydisplay.numbers(minutes, seconds)
+            sleep(0.5)  # Half second delay
+            mydisplay.numbers(minutes, seconds, colon=False)
+            sleep(0.5)  # Half second delay
+        else:
+            # For 5 minutes, keep colon steady
+            mydisplay.numbers(minutes, seconds)
+            sleep(1)  # Full second delay
         elapsed_time += 1
 
 # Generic buzzer function

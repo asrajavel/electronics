@@ -6,7 +6,8 @@
 - If button is pressed during selection window: 10-minute timer
 - If no button press: 5-minute timer (default)
 - Display shows 'SEL' during selection, then selected time, and 'done' at completion
-- Removed unnecessary delays for faster operation 
+- Removed unnecessary delays for faster operation
+- Added visual indicator: colon blinks for 10-minute timer, stays steady for 5-minute timer
 
 ## Setup using vscode/cursor
 
