@@ -94,6 +94,10 @@ def control_buzzer(beep_duration=0.2, beep_interval=0.2, repeat_count=1):
 def beep_buzzer_short():
     control_buzzer(beep_duration=0.2, beep_interval=0.2, repeat_count=1)
 
+    # Beep functions using the generic buzzer function
+def beep_buzzer_very_short():
+    control_buzzer(beep_duration=0.03, beep_interval=0.2, repeat_count=1)
+
 
 def beep_buzzer_thrice():
     control_buzzer(beep_duration=0.8, beep_interval=0.4, repeat_count=3)
@@ -112,7 +116,7 @@ def handle_time_selection(use_10_minutes):
     """
     if use_10_minutes:
         mydisplay.number(10)
-        beep_buzzer_short()  # beep for 10 minutes
+        beep_buzzer_very_short()
         sleep(.5)
         return 600  # 10 minutes
     else:
@@ -123,10 +127,8 @@ def handle_time_selection(use_10_minutes):
 
 # Main execution sequence
 if __name__ == "__main__":
-    mydisplay.show('8888')
+    mydisplay.show('8888')  # Clear the display at startup
     
-    beep_buzzer_short()  # Initial beep
-
     # Check if button was pressed during voltage display
     use_10_minutes = display_voltage()  # Display the battery voltage percentage and handle selection
     
