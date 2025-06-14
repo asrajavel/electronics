@@ -2,9 +2,7 @@ import tm1637
 import machine
 from machine import ADC
 from machine import Pin
-import time
 from utime import sleep, ticks_ms
-from machine import PWM
 
 # This needs to be set, for adc 3 to work, for measuring battery.
 adcpin = machine.Pin(29, machine.Pin.IN)
@@ -17,18 +15,6 @@ option_button = Pin(15, Pin.IN, Pin.PULL_UP)  # Button connected to GPIO 15 with
 
 # Conversion factor for ADC to voltage (multiplied by 2)
 conversion_factor = 3.3 / 65535 * 3  # 3.3V / max ADC value (65535) multiplied by 3
-
-def check_button_press():
-    """
-    Wait for 3 seconds to see if the button is pressed.
-    Returns True if button was pressed, False otherwise.
-    """
-    start_time = ticks_ms()
-    while ticks_ms() - start_time < 3000:  # 3 seconds
-        if option_button.value() == 0:  # Button is pressed (active low)
-            return True
-        sleep(0.01)
-    return False
 
 def read_average_adc(num_samples=10):
     total = 0
@@ -97,10 +83,6 @@ def control_buzzer(beep_duration=0.2, beep_interval=0.2, repeat_count=1):
 
 # Beep functions using the generic buzzer function
 def beep_buzzer_short():
-    control_buzzer(beep_duration=0.2, beep_interval=0.2, repeat_count=1)
-
-
-def beep_buzzer_once():
     control_buzzer(beep_duration=0.2, beep_interval=0.2, repeat_count=1)
 
 
